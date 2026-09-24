@@ -153,6 +153,47 @@ const COND_MAP = {
   trello_limpezas:           'cond_tl',
 };
 
+/* ─── HELPERS DE LEITURA DE TEXTO VISÍVEL ───────────────────────
+   Usam o texto que o usuário vê, não o value interno do HTML.
+─────────────────────────────────────────────────────────────── */
+
+/** Retorna o texto visível da opção selecionada num <select> */
+function selText(id) {
+  const el = document.getElementById(id);
+  if (!el || el.selectedIndex < 0) return '';
+  return el.options[el.selectedIndex].text.trim();
+}
+
+/** Retorna o texto visível do radio selecionado num grupo */
+function radioText(name) {
+  const checked = form.querySelector(`[name="${name}"]:checked`);
+  if (!checked) return '';
+  // Pega o <span> dentro do .seg__item (controle segmentado)
+  return checked.closest('.seg__item')
+    ?.querySelector('span')
+    ?.textContent.trim() ?? checked.value;
+}
+
+/** Retorna array com os textos visíveis dos checkboxes marcados */
+function chkdText(name) {
+  return [...form.querySelectorAll(`[name="${name}"]:checked`)].map(el => {
+    // Action cards (.ac) → título do card
+    const acTitle = el.closest('.ac')
+      ?.querySelector('.ac__title')
+      ?.textContent.trim();
+    if (acTitle) return acTitle;
+
+    // Tags (.tag) → texto do span
+    const tagText = el.closest('.tag')
+      ?.querySelector('span')
+      ?.textContent.trim();
+    if (tagText) return tagText;
+
+    // Fallback: usa o value mesmo
+    return el.value;
+  });
+}
+
 /* ─── DOM REFS ───────────────────────────────────────────────── */
 let form, submitBtn, resetBtn, successModal, toastEl;
 
@@ -426,53 +467,43 @@ function bindSubmit() {
 
 /* ─── COLETA DE DADOS ────────────────────────────────────────── */
 function collectData() {
-  const val  = id  => (document.getElementById(id)?.value ?? '').trim();
-  const chkd = name => [...form.querySelectorAll(`[name="${name}"]:checked`)].map(el => el.value);
-
-  /* Metadados para rastreabilidade no n8n */
-  const meta = {
-    timestamp:     new Date().toISOString(),
-    timestampBR:   new Date().toLocaleString('pt-BR', { timeZone: 'America/Bahia' }),
-    source:        'gauss-sales-form-v1',
-    environment:   N8N_USE_TEST_URL ? 'test' : 'production',
-    formVersion:   '1.0.0',
-    userAgent:     navigator.userAgent,
-  };
+  const val = id => (document.getElementById(id)?.value ?? '').trim();
 
   const data = {
-    _meta: meta,
-
-    /* ── Dados principais da venda ── */
-    venda: {
-      statusVenda:    chkd('statusVenda')[0] ?? '',
-      responsavel:    val('responsavel'),
-      nomeCliente:    val('nomeCliente'),
-      codigoProjeto:  val('codigoProjeto'),
-      cidade:         val('cidade'),
-      potenciaKwp:    parseFloat(val('potencia').replace(',', '.')) || null,
+    _meta: {
+      timestamp:   new Date().toISOString(),
+      timestampBR: new Date().toLocaleString('pt-BR', { timeZone: 'America/Bahia' }),
+      source:      'gauss-sales-form-v1',
+      environment: N8N_USE_TEST_URL ? 'test' : 'production',
+      formVersion: '1.0.0',
     },
 
-    /* ── Pagamento ── */
+    venda: {
+      statusVenda:   radioText('statusVenda'),       // "Em prospecção" ou "Fechado"
+      responsavel:   val('responsavel'),
+      nomeCliente:   val('nomeCliente'),
+      codigoProjeto: val('codigoProjeto'),
+      cidade:        val('cidade'),                  // cidade já é o próprio texto
+      potenciaKwp:   parseFloat(val('potencia').replace(',', '.')) || null,
+    },
+
     pagamento: {
-      statusPagamento: val('statusPagamento'),
+      statusPagamento: selText('statusPagamento'),   // "Pagamento Confirmado"
       valorServico:    val('valorServico'),
-      formaPagamento:  val('formaPagamento'),
+      formaPagamento:  selText('formaPagamento'),    // "1× no Pix"
       dataPagamento:   val('dataPagamento'),
     },
 
-    /* ── Contrato ── */
     contrato: {
-      statusContrato: val('statusContrato'),
+      statusContrato: selText('statusContrato'),     // "Assinado"
       dataContrato:   val('dataContrato'),
     },
 
-    /* ── Serviço ── */
     servico: {
-      servicoContratado: val('servicoContratado'),
+      servicoContratado: selText('servicoContratado'), // "Garantia Estendida"
     },
 
-    /* ── Ações selecionadas ── */
-    acoesSelecionadas: chkd('acoes'),
+    acoesSelecionadas: chkdText('acoes'),            // ["Forms Visita Comercial", ...]
   };
 
   /* ── Condicional: Forms Visita Comercial ── */
@@ -488,23 +519,27 @@ function collectData() {
   /* ── Condicional: Forms Solicitação de Serviço ── */
   if (!document.getElementById('cond_fss').hidden) {
     data.formsSolicitacaoServico = {
-      prioridade:           val('prioridade'),
-      regiaoAtendimento:    val('regiaoAtendimento'),
+      prioridade:           selText('prioridade'),          // "Alta"
+      regiaoAtendimento:    selText('regiaoAtendimento'),   // "Salvador"
       linkMaps:             val('linkMaps'),
       endereco:             val('endereco'),
-      naturezaSolicitacao:  val('naturezaSolicitacao'),
+      naturezaSolicitacao:  selText('naturezaSolicitacao'), // "Limpeza"
       descricaoSolicitacao: val('descricaoSolicitacao'),
     };
   }
 
   /* ── Condicional: Trello Garantia ── */
   if (!document.getElementById('cond_tg').hidden) {
-    data.trelloGarantia = { etiquetas: chkd('etiq_garantia') };
+    data.trelloGarantia = {
+      etiquetas: chkdText('etiq_garantia'), // ["Abrir Solicitação", "Pacote Virtual"]
+    };
   }
 
   /* ── Condicional: Trello Limpezas ── */
   if (!document.getElementById('cond_tl').hidden) {
-    data.trelloLimpezas = { etiquetas: chkd('etiq_limpezas') };
+    data.trelloLimpezas = {
+      etiquetas: chkdText('etiq_limpezas'), // ["Limpeza Avulsa", "Pacote 3 Limpezas"]
+    };
   }
 
   return data;
