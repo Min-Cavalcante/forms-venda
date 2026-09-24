@@ -1,7 +1,7 @@
 # Gauss Energia — Formulário de Venda
 
-Formulário interno para registro de vendas. Construído com HTML/CSS/JS puros,
-seguindo o Design System Gauss Energia.
+Formulário interno para registro de vendas. Dados processados via **n8n**.
+Construído com HTML/CSS/JS puros, sem dependências externas.
 
 ---
 
@@ -12,7 +12,7 @@ gauss-sales-form/
 ├── index.html            ← Formulário principal
 ├── colors_and_type.css   ← Design System tokens
 ├── form.css              ← Estilos do formulário
-├── form.js               ← Lógica e validação
+├── form.js               ← Lógica, validação e integração n8n
 ├── logo.svg              ← Logo Gauss Energia
 ├── fonts/
 │   ├── Sora-Thin.ttf
@@ -27,32 +27,172 @@ gauss-sales-form/
 
 ---
 
-## Como publicar
+## 1 — Configurar o webhook no n8n
 
-### 1 — Prepare os arquivos
+### 1.1 — Criar o workflow
 
-1. Copie seus arquivos de fonte Sora para a pasta `fonts/`
-2. Copie o `logo.svg` para a raiz
-3. Copie o `colors_and_type.css` para a raiz
+1. Acesse seu n8n e crie um **novo Workflow**
+2. Adicione o node **Webhook** como trigger
+3. Configure o node:
 
-### 2 — Publique no GitHub
+| Campo            | Valor recomendado           |
+|------------------|-----------------------------|
+| HTTP Method      | `POST`                      |
+| Path             | `gauss-venda`               |
+| Response Mode    | `Respond to Webhook` node   |
+| Authentication   | `None` ou `Header Auth`     |
+
+4. Ative o workflow (botão **Activate** no canto superior direito)
+5. Copie as duas URLs geradas:
+
+```
+Teste:     https://SEU.app.n8n.cloud/webhook-test/SEU-ID
+Produção:  https://SEU.app.n8n.cloud/webhook/SEU-ID
+```
+
+### 1.2 — Colar as URLs no formulário
+
+Abra `form.js` e atualize as constantes no topo:
+
+```js
+// URL de produção (workflow ATIVO no n8n)
+const N8N_WEBHOOK_PROD = 'https://SEU.app.n8n.cloud/webhook/SEU-ID';
+
+// URL de teste (clique em "Listen for test event" no n8n)
+const N8N_WEBHOOK_TEST = 'https://SEU.app.n8n.cloud/webhook-test/SEU-ID';
+
+// false = produção  |  true = teste
+const N8N_USE_TEST_URL = false;
+```
+
+### 1.3 — Autenticação (opcional, recomendado)
+
+No node Webhook do n8n, ative **Header Auth**:
+- **Name:** `Authorization`
+- **Value:** `Bearer SEU_TOKEN_SECRETO`
+
+Em seguida, no `form.js`:
+```js
+const N8N_AUTH_TOKEN = 'SEU_TOKEN_SECRETO';
+```
+
+> ⚠️ **Nunca** comite tokens no repositório público.
+> Considere usar variáveis de ambiente via Vercel para projetos privados.
+
+### 1.4 — Habilitar CORS no n8n
+
+Se o formulário e o n8n estiverem em domínios diferentes
+(o que é quase sempre o caso com Vercel), habilite CORS:
+
+**n8n Cloud / Self-hosted:**
+No node Webhook → aba **Settings** → ative
+`Allow Cross-Origin Resource Sharing (CORS)` e defina:
+
+```
+Allowed Origins: https://seu-projeto.vercel.app
+```
+
+Ou para liberar qualquer origem durante testes: `*`
+
+---
+
+## 2 — Estrutura do JSON enviado ao n8n
+
+O formulário envia um `POST` com `Content-Type: application/json`:
+
+```json
+{
+  "_meta": {
+    "timestamp":   "2025-01-15T14:30:00.000Z",
+    "timestampBR": "15/01/2025, 11:30:00",
+    "source":      "gauss-sales-form-v1",
+    "environment": "production",
+    "formVersion": "1.0.0"
+  },
+  "venda": {
+    "statusVenda":   "fechado",
+    "responsavel":   "Ana Lima",
+    "nomeCliente":   "João Silva",
+    "codigoProjeto": "GAU-2025-042",
+    "cidade":        "Salvador",
+    "potenciaKwp":   12.5
+  },
+  "pagamento": {
+    "statusPagamento": "confirmado",
+    "valorServico":    "1.500,00",
+    "formaPagamento":  "1x_pix",
+    "dataPagamento":   "2025-01-15"
+  },
+  "contrato": {
+    "statusContrato": "assinado",
+    "dataContrato":   "2025-01-10"
+  },
+  "servico": {
+    "servicoContratado": "garantia_estendida"
+  },
+  "acoesSelecionadas": [
+    "forms_visita_comercial",
+    "trello_garantia"
+  ],
+  "formsVisitaComercial": {
+    "cpfCnpj":            "000.000.000-00",
+    "telefone":           "(71) 99999-9999",
+    "email":              "joao@email.com",
+    "descricaoPagamento": "Pix recebido em 14/01"
+  },
+  "trelloGarantia": {
+    "etiquetas": ["abrir_solicitacao", "pacote_virtual"]
+  }
+}
+```
+
+> Os blocos condicionais (`formsVisitaComercial`, `formsSolicitacaoServico`,
+> `trelloGarantia`, `trelloLimpezas`) **só aparecem no JSON** quando as
+> ações correspondentes estiverem selecionadas.
+
+---
+
+## 3 — Sugestão de workflow n8n
+
+```
+[Webhook]
+    │
+    ├─ IF acoesSelecionadas inclui "forms_visita_comercial"
+    │       └─ [HTTP Request] → Forms Visita Comercial
+    │
+    ├─ IF acoesSelecionadas inclui "forms_solicitacao_servico"
+    │       └─ [HTTP Request] → Forms Solicitação de Serviço
+    │
+    ├─ IF acoesSelecionadas inclui "trello_garantia"
+    │       └─ [Trello] → Criar Card no Board Garantia
+    │
+    ├─ IF acoesSelecionadas inclui "trello_limpezas"
+    │       └─ [Trello] → Criar Card no Board Limpezas
+    │
+    └─ [Respond to Webhook] → { "success": true }
+```
+
+---
+
+## 4 — Publicar no GitHub
 
 ```bash
 git init
 git add .
-git commit -m "feat: formulário de venda Gauss Energia"
+git commit -m "feat: formulário de venda Gauss Energia + integração n8n"
 git branch -M main
 git remote add origin https://github.com/SEU_USUARIO/gauss-sales-form.git
 git push -u origin main
 ```
 
-### 3 — Publique no Vercel
+---
+
+## 5 — Publicar no Vercel
 
 **Via interface (recomendado):**
-1. Acesse [vercel.com](https://vercel.com) e faça login
-2. Clique em **Add New Project**
-3. Importe o repositório criado acima
-4. Clique em **Deploy** — nenhuma configuração adicional é necessária
+1. Acesse [vercel.com/new](https://vercel.com/new)
+2. Importe o repositório do GitHub
+3. Clique em **Deploy** — nenhuma configuração adicional necessária
 
 **Via CLI:**
 ```bash
@@ -61,64 +201,20 @@ vercel login
 vercel --prod
 ```
 
+Após o deploy, atualize o **Allowed Origins** do CORS no n8n
+com a URL gerada pelo Vercel (ex: `https://gauss-sales-form.vercel.app`).
+
 ---
 
-## Integração com backend / webhook
+## 6 — Modo de desenvolvimento (sem n8n configurado)
 
-Abra `form.js` e defina `API_ENDPOINT`:
+Se `N8N_WEBHOOK_PROD` ainda contiver `SEU_USUARIO` ou `SEU-WEBHOOK-ID`,
+o formulário entra em **modo dev**: os dados são exibidos no
+console do navegador (F12 → Console) em vez de serem enviados.
 
-```js
-// Make / Integromat
-const API_ENDPOINT = 'https://hook.make.com/SEU_WEBHOOK';
+Um aviso em vermelho aparece no console ao carregar a página:
 
-// API própria
-const API_ENDPOINT = 'https://api.seudominio.com/vendas';
-
-// Vercel serverless (crie api/submit.js)
-const API_ENDPOINT = '/api/submit';
 ```
-
-Os dados são enviados via `POST` com `Content-Type: application/json`.
-
----
-
-## Estrutura do JSON enviado
-
-```json
-{
-  "_meta": { "timestamp": "2025-01-01T12:00:00.000Z", "source": "gauss-sales-form-v1" },
-  "venda": {
-    "statusVenda": "fechado",
-    "responsavel": "Nome",
-    "nomeCliente": "Cliente",
-    "codigoProjeto": "GAU-2025-001",
-    "cidade": "Salvador",
-    "potenciaKwp": "12.5"
-  },
-  "pagamento": {
-    "statusPagamento": "confirmado",
-    "valorServico": "1.500,00",
-    "formaPagamento": "1x_pix",
-    "dataPagamento": "2025-01-15"
-  },
-  "contrato": { "statusContrato": "assinado", "dataContrato": "2025-01-10" },
-  "servico": { "servicoContratado": "garantia_estendida" },
-  "acoesSelecionadas": ["forms_visita_comercial", "trello_garantia"],
-  "formsVisitaComercial": {
-    "cpfCnpj": "000.000.000-00",
-    "telefone": "(71) 99999-9999",
-    "email": "cliente@email.com",
-    "descricaoPagamento": "..."
-  },
-  "trelloGarantia": { "etiquetas": ["abrir_solicitacao", "pacote_virtual"] }
-}
+⚠️  Webhook n8n não configurado.
+    Abra form.js e atualize N8N_WEBHOOK_PROD com a URL real do seu workflow.
 ```
-
----
-
-## Notas de desenvolvimento
-
-- **Sem dependências externas** — funciona 100% offline após carregado
-- **Modo dev** — com `API_ENDPOINT = null` os dados são logados no console do browser
-- `colors_and_type.css` importa as fontes via Google Fonts como fallback;
-  os arquivos `.ttf` em `fonts/` têm prioridade quando presentes
