@@ -4,6 +4,29 @@
    Depende de: colors_and_type.css
    ============================================================ */
 
+/* ── Logo: caso A (SVG completo com texto) ── */
+.gh__logo--full {
+  height: 36px;
+  width: auto;
+  display: block;
+  /* Inverte para branco se o SVG tiver cores escuras no fundo escuro do header */
+  /* filter: brightness(0) invert(1); */   /* ← descomente se precisar */
+}
+
+/* ── Logo: caso B (só ícone) ── */
+.gh__logo--icon {
+  height: 32px;
+  width: auto;
+  display: block;
+}
+
+/* ── Fallback de texto (caso A) ── */
+.gh__brand-text {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
 /* ── Noscript ── */
 .noscript-warn {
   background: var(--signal-warn);
