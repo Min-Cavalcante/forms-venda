@@ -22,11 +22,23 @@
 <header class="gh">
   <div class="gh__inner">
     <div class="gh__brand">
-      <img src="logo.svg" alt="Gauss Energia" class="gh__logo"
-           onerror="this.style.display='none'" />
-      <span class="gauss-wordmark lg gh__wordmark">GAUSS</span>
-      <span class="gh__div" aria-hidden="true"></span>
-      <span class="gh__sub">Energia</span>
+
+      <!-- SVG completo: ocupa todo o espaço da marca -->
+      <img
+        src="logo.svg"
+        alt="Gauss Energia"
+        class="gh__logo gh__logo--full"
+        onerror="this.style.display='none';
+                 document.getElementById('gh-text-fallback').style.display='flex';"
+      />
+
+      <!-- Aparece SOMENTE se o SVG falhar -->
+      <div id="gh-text-fallback" class="gh__brand-text" style="display:none">
+        <span class="gauss-wordmark lg gh__wordmark">GAUSS</span>
+        <span class="gh__div" aria-hidden="true"></span>
+        <span class="gh__sub">Energia</span>
+      </div>
+
     </div>
     <div class="gh__right">
       <span class="eyebrow gh__tag">Uso Interno · CRM</span>
