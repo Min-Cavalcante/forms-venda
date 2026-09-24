@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow" />
+  <meta name="theme-color" content="#07100A" />
+  <link rel="icon" type="image/svg+xml" href="logo.svg" />
+  <title>Formulário de Venda — Gauss Energia</title>
+  <link rel="stylesheet" href="colors_and_type.css" />
+  <link rel="stylesheet" href="form.css" />
+</head>
+<body>
+
+<noscript>
+  <div class="noscript-warn">
+    Este formulário requer JavaScript habilitado para funcionar corretamente.
+  </div>
+</noscript>
+
+<!-- ══ HEADER ══════════════════════════════════════════════════ -->
+<header class="gh">
+  <div class="gh__inner">
+    <div class="gh__brand">
+      <img src="logo.svg" alt="Gauss Energia" class="gh__logo"
+           onerror="this.style.display='none'" />
+      <span class="gauss-wordmark lg gh__wordmark">GAUSS</span>
+      <span class="gh__div" aria-hidden="true"></span>
+      <span class="gh__sub">Energia</span>
+    </div>
+    <div class="gh__right">
+      <span class="eyebrow gh__tag">Uso Interno · CRM</span>
+      <h1 class="gh__title">Formulário de Venda</h1>
+    </div>
+  </div>
+</header>
+
+<!-- ══ MAIN ════════════════════════════════════════════════════ -->
+<main class="gf-main">
+  <form id="salesForm" novalidate autocomplete="off">
+
+    <!-- ── SEÇÃO 01: Dados da Venda ──────────────────────────── -->
+    <section class="fs">
+      <div class="fs__head">
+        <span class="eyebrow eyebrow--accent fs__num">01</span>
+        <div>
+          <h2 class="fs__title">Dados da Venda</h2>
+          <p class="fs__sub">Informações gerais sobre a oportunidade</p>
+        </div>
+      </div>
+
+      <div class="fg">
+
+        <!-- Status da Venda -->
+        <div class="fld fld--full">
+          <span class="fld__lbl" id="lbl-sv">
+            Status da Venda <span class="req" aria-label="obrigatório">*</span>
+          </span>
+          <div class="seg" role="radiogroup" aria-labelledby="lbl-sv">
+            <label class="seg__item">
+              <input type="radio" name="statusVenda" value="em_prospeccao" />
+              <span>Em prospecção</span>
+            </label>
+            <label class="seg__item">
+              <input type="radio" name="statusVenda" value="fechado" />
+              <span>Fechado</span>
+            </label>
+          </div>
+          <span class="fld__err" id="err-sv"></span>
+        </div>
+
+        <!-- Responsável -->
+        <div class="fld">
+          <label class="fld__lbl" for="responsavel">
+            Responsável pelo Preenchimento <span class="req">*</span>
+          </label>
+          <input type="text" id="responsavel" name="responsavel"
+                 placeholder="Seu nome completo" required />
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Nome do Cliente -->
+        <div class="fld">
+          <label class="fld__lbl" for="nomeCliente">
+            Nome do Cliente <span class="req">*</span>
+          </label>
+          <input type="text" id="nomeCliente" name="nomeCliente"
+                 placeholder="Nome completo do cliente" required />
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Código do Projeto -->
+        <div class="fld">
+          <label class="fld__lbl" for="codigoProjeto">Código do Projeto</label>
+          <input type="text" id="codigoProjeto" name="codigoProjeto"
+                 placeholder="Ex: GAU-2025-001" class="mono" />
+        </div>
+
+        <!-- Cidade -->
+        <div class="fld">
+          <label class="fld__lbl" for="cidade">
+            Cidade <span class="req">*</span>
+          </label>
+          <div class="sel-wrap">
+            <select id="cidade" name="cidade" required>
+              <option value="" disabled selected>Selecione a cidade</option>
+            </select>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Potência -->
+        <div class="fld">
+          <label class="fld__lbl" for="potencia">
+            Potência do Sistema <span class="req">*</span>
+          </label>
+          <div class="inp-affix inp-affix--suf">
+            <input type="number" id="potencia" name="potencia"
+                   placeholder="0,00" step="0.01" min="0" required />
+            <span class="inp-affix__tag">kWp</span>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO 02: Pagamento & Contrato ────────────────────── -->
+    <section class="fs">
+      <div class="fs__head">
+        <span class="eyebrow eyebrow--accent fs__num">02</span>
+        <div>
+          <h2 class="fs__title">Pagamento &amp; Contrato</h2>
+          <p class="fs__sub">Condições comerciais desta venda</p>
+        </div>
+      </div>
+
+      <div class="fg">
+
+        <!-- Status do Pagamento -->
+        <div class="fld">
+          <label class="fld__lbl" for="statusPagamento">
+            Status do Pagamento <span class="req">*</span>
+          </label>
+          <div class="sel-wrap">
+            <select id="statusPagamento" name="statusPagamento" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="confirmado">Pagamento Confirmado</option>
+              <option value="pendente">Pagamento Pendente</option>
+            </select>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Valor do Serviço -->
+        <div class="fld">
+          <label class="fld__lbl" for="valorServico">
+            Valor do Serviço <span class="req">*</span>
+          </label>
+          <div class="inp-affix inp-affix--pre" id="wrap-valor">
+            <span class="inp-affix__tag">R$</span>
+            <input type="text" id="valorServico" name="valorServico"
+                   placeholder="0,00" inputmode="numeric" required />
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Forma de Pagamento -->
+        <div class="fld">
+          <label class="fld__lbl" for="formaPagamento">
+            Forma de Pagamento <span class="req">*</span>
+          </label>
+          <div class="sel-wrap">
+            <select id="formaPagamento" name="formaPagamento" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="1x_boleto">1× no Boleto</option>
+              <option value="1x_pix">1× no Pix</option>
+              <option value="parcelado_cartao">Parcelado — Cartão</option>
+              <option value="parcelado_boleto">Parcelado — Boleto</option>
+              <option value="parcelado_pix">Parcelado — Pix</option>
+            </select>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Data do Pagamento -->
+        <div class="fld">
+          <label class="fld__lbl" for="dataPagamento">Data do Pagamento</label>
+          <input type="date" id="dataPagamento" name="dataPagamento" />
+        </div>
+
+        <!-- Status do Contrato -->
+        <div class="fld">
+          <label class="fld__lbl" for="statusContrato">
+            Status do Contrato <span class="req">*</span>
+          </label>
+          <div class="sel-wrap">
+            <select id="statusContrato" name="statusContrato" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="assinado">Assinado</option>
+              <option value="assinatura_pendente">Assinatura Pendente</option>
+              <option value="nao_enviado">Não Enviado</option>
+              <option value="sem_contrato">Sem Contrato</option>
+            </select>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+
+        <!-- Data do Contrato -->
+        <div class="fld">
+          <label class="fld__lbl" for="dataContrato">Data do Contrato</label>
+          <input type="date" id="dataContrato" name="dataContrato" />
+        </div>
+
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO 03: Serviço ─────────────────────────────────── -->
+    <section class="fs">
+      <div class="fs__head">
+        <span class="eyebrow eyebrow--accent fs__num">03</span>
+        <div>
+          <h2 class="fs__title">Serviço</h2>
+          <p class="fs__sub">Tipo de serviço contratado ou oferecido</p>
+        </div>
+      </div>
+
+      <div class="fg">
+        <div class="fld fld--full">
+          <label class="fld__lbl" for="servicoContratado">
+            Serviço Contratado / Oferecido <span class="req">*</span>
+          </label>
+          <div class="sel-wrap">
+            <select id="servicoContratado" name="servicoContratado" required>
+              <option value="" disabled selected>Selecione o serviço</option>
+              <option value="garantia_estendida">Garantia Estendida</option>
+              <option value="garantia_estendida_renovacao">Garantia Estendida (Renovação)</option>
+              <option value="pacote_virtual">Pacote Virtual</option>
+              <option value="limpeza_avulsa">Limpeza Avulsa</option>
+              <option value="pacote_3_limpezas">Pacote 3 Limpezas</option>
+              <option value="pacote_5_limpezas">Pacote 5 Limpezas</option>
+              <option value="realocacao">Realocação</option>
+              <option value="servico_telhado_placas">Serviço no telhado/placas</option>
+              <option value="garantia_fabricante">Garantia do Fabricante</option>
+              <option value="visita_inspecao">Visita de Inspeção</option>
+              <option value="visita_reconexao">Visita de Reconexão</option>
+              <option value="alteracao_rateio">Alteração de Rateio</option>
+              <option value="servico_avulso">Serviço Avulso</option>
+            </select>
+          </div>
+          <span class="fld__err"></span>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── SEÇÃO 04: Ações ───────────────────────────────────── -->
+    <section class="fs" id="sec-acoes">
+      <div class="fs__head">
+        <span class="eyebrow eyebrow--accent fs__num">04</span>
+        <div>
+          <h2 class="fs__title">Ações Necessárias</h2>
+          <p class="fs__sub">Selecione tudo que deve ser gerado para esta venda</p>
+        </div>
+      </div>
+
+      <!-- Action cards -->
+      <div class="action-grid" role="group" aria-label="Selecione as ações">
+
+        <label class="ac" for="acao_fvc">
+          <input type="checkbox" id="acao_fvc" name="acoes" value="forms_visita_comercial" />
+          <div class="ac__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M5 6h8M5 9h8M5 12h5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="ac__body">
+            <span class="ac__title">Forms Visita Comercial</span>
+            <span class="ac__desc">Preenche dados do cliente para visita</span>
+          </div>
+          <span class="ac__chk" aria-hidden="true"></span>
+        </label>
+
+        <label class="ac" for="acao_fss">
+          <input type="checkbox" id="acao_fss" name="acoes" value="forms_solicitacao_servico" />
+          <div class="ac__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <circle cx="9" cy="9" r="7" stroke="currentColor" stroke-width="1.4"/>
+              <path d="M9 6v3.5l2.5 1.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <div class="ac__body">
+            <span class="ac__title">Forms de Solicitação de Serviço</span>
+            <span class="ac__desc">Detalha a ordem de serviço</span>
+          </div>
+          <span class="ac__chk" aria-hidden="true"></span>
+        </label>
+
+        <label class="ac" for="acao_tg">
+          <input type="checkbox" id="acao_tg" name="acoes" value="trello_garantia" />
+          <div class="ac__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M9 2l1.8 5H16l-4 3 1.5 5L9 12l-4.5 3 1.5-5-4-3h5.2L9 2z"
+                    stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="ac__body">
+            <span class="ac__title">Trello Garantia</span>
+            <span class="ac__desc">Card no board de garantia</span>
+          </div>
+          <span class="ac__chk" aria-hidden="true"></span>
+        </label>
+
+        <label class="ac" for="acao_tl">
+          <input type="checkbox" id="acao_tl" name="acoes" value="trello_limpezas" />
+          <div class="ac__icon" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none">
+              <path d="M4.5 16c0-2.5 2-4 4.5-6 2.5 2 4.5 3.5 4.5 6"
+                    stroke="currentColor" stroke-width="1.4" stroke-linecap="round"/>
+              <path d="M9 10V4M7 6l2-2 2 2" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </div>
+          <div class="ac__body">
+            <span class="ac__title">Trello Limpezas</span>
+            <span class="ac__desc">Card no board de limpezas</span>
+          </div>
+          <span class="ac__chk" aria-hidden="true"></span>
+        </label>
+
+      </div>
+
+      <!-- ── CONDICIONAL: Forms Visita Comercial ──────────────── -->
+      <div class="cond" id="cond_fvc" hidden aria-hidden="true">
+        <div class="cond__head">
+          <span class="cond__badge">Forms Visita Comercial</span>
+          <h3>Dados para a Visita</h3>
+        </div>
+        <div class="fg">
+          <div class="fld">
+            <label class="fld__lbl" for="cpfCnpj">CPF / CNPJ</label>
+            <input type="text" id="cpfCnpj" name="cpfCnpj"
+                   placeholder="000.000.000-00" maxlength="18"
+                   inputmode="numeric" class="mono" />
+          </div>
+          <div class="fld">
+            <label class="fld__lbl" for="telefone">Telefone</label>
+            <input type="tel" id="telefone" name="telefone"
+                   placeholder="(00) 00000-0000" maxlength="15" />
+          </div>
+          <div class="fld fld--full">
+            <label class="fld__lbl" for="email">E-mail</label>
+            <input type="email" id="email" name="email"
+                   placeholder="cliente@email.com" />
+          </div>
+          <div class="fld fld--full">
+            <label class="fld__lbl" for="descricaoPagamento">Descrição do Pagamento</label>
+            <textarea id="descricaoPagamento" name="descricaoPagamento" rows="3"
+                      placeholder="Detalhes sobre o pagamento…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CONDICIONAL: Forms Solicitação de Serviço ─────────── -->
+      <div class="cond" id="cond_fss" hidden aria-hidden="true">
+        <div class="cond__head">
+          <span class="cond__badge">Forms de Solicitação de Serviço</span>
+          <h3>Dados da Solicitação</h3>
+        </div>
+        <div class="fg">
+          <div class="fld">
+            <label class="fld__lbl" for="prioridade">Prioridade</label>
+            <div class="sel-wrap">
+              <select id="prioridade" name="prioridade">
+                <option value="" disabled selected>Selecione</option>
+                <option value="baixa">🟢  Baixa</option>
+                <option value="media">🟡  Média</option>
+                <option value="alta">🟠  Alta</option>
+                <option value="critica">🔴  Crítica</option>
+              </select>
+            </div>
+          </div>
+          <div class="fld">
+            <label class="fld__lbl" for="regiaoAtendimento">Região de Atendimento</label>
+            <div class="sel-wrap">
+              <select id="regiaoAtendimento" name="regiaoAtendimento">
+                <option value="" disabled selected>Selecione</option>
+                <option value="salvador">Salvador</option>
+                <option value="irece">Irecê</option>
+              </select>
+            </div>
+          </div>
+          <div class="fld">
+            <label class="fld__lbl" for="linkMaps">Link do Maps</label>
+            <input type="url" id="linkMaps" name="linkMaps"
+                   placeholder="https://maps.google.com/…" />
+          </div>
+          <div class="fld">
+            <label class="fld__lbl" for="endereco">Endereço</label>
+            <input type="text" id="endereco" name="endereco"
+                   placeholder="Rua, número, bairro, cidade" />
+          </div>
+          <div class="fld fld--full">
+            <label class="fld__lbl" for="naturezaSolicitacao">Natureza da Solicitação</label>
+            <div class="sel-wrap">
+              <select id="naturezaSolicitacao" name="naturezaSolicitacao">
+                <option value="" disabled selected>Selecione o tipo</option>
+                <option value="manutencao_preventiva">Manutenção Preventiva</option>
+                <option value="limpeza">Limpeza</option>
+                <option value="recolhimento_material">Recolhimento de material</option>
+                <option value="config_internet">Configuração de internet</option>
+                <option value="ligar_inversor_medidor">Ligar inversor após troca de medidor</option>
+                <option value="visita_tecnica">Visita técnica</option>
+                <option value="avaliacao_sombreamento">Avaliação de sombreamento</option>
+                <option value="fotos_drone">Fotos de drone</option>
+                <option value="medicao_telhado">Medição de telhado</option>
+                <option value="medicao_distancia_cabos">Medição de distância de cabos</option>
+                <option value="disjuntores_desarmando">Disjuntos desarmando</option>
+                <option value="disjuntor_queimado">Disjuntor queimado</option>
+                <option value="dps_queimado">DPS queimado</option>
+                <option value="inversor_erro">Inversor com mensagem de erro</option>
+                <option value="incendio">Incêndio</option>
+                <option value="aumentar_tensao">Aumentar limite de tensão</option>
+                <option value="inversor_desligado">Inversor desligado</option>
+                <option value="string_problema">String desligada / com problema</option>
+              </select>
+            </div>
+          </div>
+          <div class="fld fld--full">
+            <label class="fld__lbl" for="descricaoSolicitacao">Descrição da Solicitação</label>
+            <textarea id="descricaoSolicitacao" name="descricaoSolicitacao" rows="4"
+                      placeholder="Descreva a solicitação com o máximo de detalhes…"></textarea>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CONDICIONAL: Trello Garantia ─────────────────────── -->
+      <div class="cond" id="cond_tg" hidden aria-hidden="true">
+        <div class="cond__head">
+          <span class="cond__badge">Trello Garantia</span>
+          <h3>Etiquetas — Garantia</h3>
+        </div>
+        <div class="tag-group">
+          <p class="tag-group__lbl">
+            Etiquetas Geral
+            <span class="tag-group__hint">(selecione quantas quiser)</span>
+          </p>
+          <div class="tags">
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="aguardando_pagamento" /><span>Aguardando Pagamento</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="abrir_solicitacao" /><span>Abrir Solicitação</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="manutencao_preventiva" /><span>Manutenção Preventiva</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="garantia_limpeza" /><span>Garantia + Limpeza</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="pacote_virtual" /><span>Pacote Virtual</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="servico_avulso" /><span>Serviço Avulso</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="pacote_de_limpezas" /><span>Pacote de Limpezas</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_garantia" value="limpeza_avulsa" /><span>Limpeza Avulsa</span></label>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CONDICIONAL: Trello Limpezas ─────────────────────── -->
+      <div class="cond" id="cond_tl" hidden aria-hidden="true">
+        <div class="cond__head">
+          <span class="cond__badge">Trello Limpezas</span>
+          <h3>Etiquetas — Limpezas</h3>
+        </div>
+        <div class="tag-group">
+          <p class="tag-group__lbl">
+            Etiquetas Geral
+            <span class="tag-group__hint">(selecione quantas quiser)</span>
+          </p>
+          <div class="tags">
+            <label class="tag"><input type="checkbox" name="etiq_limpezas" value="aguardando_pagamento" /><span>Aguardando Pagamento</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_limpezas" value="limpeza_avulsa" /><span>Limpeza Avulsa</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_limpezas" value="pacote_3_limpezas" /><span>Pacote 3 Limpezas</span></label>
+            <label class="tag"><input type="checkbox" name="etiq_limpezas" value="pacote_5_limpezas" /><span>Pacote 5 Limpezas</span></label>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+    <!-- ── BOTÕES ─────────────────────────────────────────────── -->
+    <div class="f-btns">
+      <button type="button" class="btn btn--ghost" id="btnReset">
+        Limpar formulário
+      </button>
+      <button type="submit" class="btn btn--primary" id="btnSubmit">
+        <span>Registrar Venda</span>
+        <svg width="16" height="16" viewBox="0 0 16 16" fill="none" aria-hidden="true">
+          <path d="M3 8h10M9 4l4 4-4 4" stroke="currentColor" stroke-width="1.5"
+                stroke-linecap="round" stroke-linejoin="round"/>
+        </svg>
+      </button>
+    </div>
+
+  </form>
+</main>
+
+<!-- ══ TOAST ════════════════════════════════════════════════════ -->
+<div class="toast" id="toast" role="alert" aria-live="assertive" hidden>
+  <span class="toast__ic" aria-hidden="true">
+    <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
+      <path d="M2 6l2.5 2.5L10 3" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round"/>
+    </svg>
+  </span>
+  <span id="toastMsg">Venda registrada com sucesso!</span>
+</div>
+
+<!-- ══ MODAL DE SUCESSO ══════════════════════════════════════════ -->
+<div class="modal-overlay" id="successModal" hidden
+     role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal__icon" aria-hidden="true">
+      <svg width="36" height="36" viewBox="0 0 36 36" fill="none">
+        <circle cx="18" cy="18" r="16" stroke="var(--gauss-green)" stroke-width="2"/>
+        <path d="M10 18l5.5 5.5L26 12" stroke="var(--gauss-green)" stroke-width="2.5"
+              stroke-linecap="round" stroke-linejoin="round"/>
+      </svg>
+    </div>
+    <h2 class="h2" id="modalTitle">Venda registrada!</h2>
+    <p>Os dados foram enviados com sucesso. Você pode fechar ou registrar uma nova venda.</p>
+    <div class="modal__actions">
+      <button class="btn btn--ghost" id="btnNewSale">Nova venda</button>
+      <button class="btn btn--primary" id="btnCloseModal">Fechar</button>
+    </div>
+  </div>
+</div>
+
+<script src="form.js"></script>
+</body>
+</html>
