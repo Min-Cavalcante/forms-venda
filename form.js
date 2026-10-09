@@ -279,15 +279,15 @@ function bindMasks() {
 
   /* Telefone */
   const tel = document.getElementById('telefone');
-  if (tel) {
-    tel.addEventListener('input', e => {
+  [tel, document.getElementById('telefoneServico')].filter(Boolean).forEach(campoTelefone => {
+    campoTelefone.addEventListener('input', e => {
       let v = e.target.value.replace(/\D/g, '').slice(0, 11);
       if      (v.length > 10) v = v.replace(/^(\d{2})(\d{5})(\d{4})$/, '($1) $2-$3');
       else if (v.length > 6)  v = v.replace(/^(\d{2})(\d{4})(\d+)$/,   '($1) $2-$3');
       else if (v.length > 2)  v = v.replace(/^(\d{2})(\d+)$/,           '($1) $2');
       e.target.value = v;
     });
-  }
+  });
 
   /* Valor (moeda BRL) */
   const valor = document.getElementById('valorServico');
@@ -523,6 +523,8 @@ function collectData() {
       regiaoAtendimento:    selText('regiaoAtendimento'),   // "Salvador"
       linkMaps:             val('linkMaps'),
       endereco:             val('endereco'),
+      nomeContato:          val('nomeContatoServico'),
+      telefone:             val('telefoneServico'),
       naturezaSolicitacao:  selText('naturezaSolicitacao'), // "Limpeza"
       descricaoSolicitacao: val('descricaoSolicitacao'),
     };
