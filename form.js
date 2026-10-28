@@ -51,6 +51,10 @@ const N8N_AUTH_TOKEN = '';
 
 const N8N_ENDPOINT = N8N_USE_TEST_URL ? N8N_WEBHOOK_TEST : N8N_WEBHOOK_PROD;
 
+/* Identificador estável da contratação durante tentativas de envio. */
+let idVendaAtual = crypto.randomUUID();
+
+
 /* ─── CIDADES ────────────────────────────────────────────────── */
 const CIDADES = [
   'Abaíra','Abaré','Acajutiba','Adustina','Água Fria','Aiquara',
@@ -207,6 +211,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
   populateCities();
   bindConditionals();
+  syncConditionalVisibility();
   bindMasks();
   bindLiveValidation();
   bindSubmit();
@@ -253,6 +258,17 @@ function bindConditionals() {
         section.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
       }
     });
+  });
+}
+
+// Sincroniza a visibilidade com as opções marcadas por padrão.
+// Não dispara eventos nem rola a página automaticamente.
+function syncConditionalVisibility() {
+  form.querySelectorAll('input[name="acoes"]').forEach(cb => {
+    const section = document.getElementById(COND_MAP[cb.value]);
+    if (!section) return;
+    section.hidden = !cb.checked;
+    section.setAttribute('aria-hidden', String(!cb.checked));
   });
 }
 
@@ -470,6 +486,7 @@ function collectData() {
   const val = id => (document.getElementById(id)?.value ?? '').trim();
 
   const data = {
+    idVenda: idVendaAtual,
     _meta: {
       timestamp:   new Date().toISOString(),
       timestampBR: new Date().toLocaleString('pt-BR', { timeZone: 'America/Bahia' }),
@@ -591,12 +608,15 @@ function bindReset() {
 }
 
 function resetFormFull() {
+  idVendaAtual = crypto.randomUUID();
   form.reset();
 
   Object.values(COND_MAP).forEach(id => {
     const el = document.getElementById(id);
     if (el) { el.hidden = true; el.setAttribute('aria-hidden', 'true'); }
   });
+
+  syncConditionalVisibility();
 
   form.querySelectorAll('.fld--has-error').forEach(el => el.classList.remove('fld--has-error'));
   form.querySelectorAll('.is-error').forEach(el => el.classList.remove('is-error'));
