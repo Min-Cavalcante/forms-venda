@@ -39,7 +39,7 @@ const N8N_WEBHOOK_PROD = 'https://n8n.gaussenergia.com.br/webhook/forms-venda';
 const N8N_WEBHOOK_TEST = 'https://n8n.gaussenergia.com.br/webhook-test/forms-venda';
 /* true  → usa URL de teste (n8n deve estar em "Listen for test event")
    false → usa URL de produção (workflow deve estar ATIVO no n8n)       */
-const N8N_USE_TEST_URL = true;
+const N8N_USE_TEST_URL = false;
 
 /* Cabeçalho de autenticação opcional — configure em Header Auth no n8n.
    Se não usar autenticação, deixe N8N_AUTH_TOKEN como string vazia ''. */
